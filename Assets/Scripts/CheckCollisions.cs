@@ -58,6 +58,13 @@ public class CheckCollisions : MonoBehaviour
         }
         else if (other.CompareTag("Entrance")) // User's Path Following script is enabled to take the store path.
         {
+            if(playerController.Player.GetComponent<PathCreation.Examples.PathFollower>() == null) playerController.Player.AddComponent<PathCreation.Examples.PathFollower>();
+            if(pathFollower == null) pathFollower = playerController.Player.GetComponent<PathCreation.Examples.PathFollower>();
+            if (pathFollower.pathCreator == null) 
+            {
+                pathFollower.pathCreator = GameObject.Find("Path").GetComponent<PathCreation.PathCreator>();
+                pathFollower.playerController = playerController.GetComponent<PlayerController>();
+            }    
             pathFollower.enabled = true;
         }
         else if (other.CompareTag("StorePoint")) // User's movement script disabled to stop the user in front of the store
@@ -66,11 +73,12 @@ public class CheckCollisions : MonoBehaviour
             playerController.enabled = false;
             storeScript.storeCanvas.SetActive(true);
         }
+        
         else if (other.CompareTag("Exit"))
         {
             playerController.enabled = true;
-            pathFollower.enabled = false;
-            // playerController.Player.transform.rotation = Quaternion.Euler(0, 0, 0);
+            Destroy(pathFollower);
+            playerController.Player.transform.rotation = Quaternion.Euler(0, 0, 0);
         }
     }
 
